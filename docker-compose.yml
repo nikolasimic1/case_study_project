@@ -1,0 +1,50 @@
+services:
+  laravel_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=your-app-key
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql_db
+      - DB_PORT=3306
+      - DB_DATABASE=cs_db
+      - DB_USERNAME=cs_user
+      - DB_PASSWORD=cs_password
+    depends_on:
+      - mysql_db
+
+  react_app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+    stdin_open: true
+    tty: true
+
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cs_db
+      MYSQL_USER: cs_user
+      MYSQL_PASSWORD: cs_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
